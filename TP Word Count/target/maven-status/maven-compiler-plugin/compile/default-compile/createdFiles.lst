@@ -1,0 +1,4 @@
+com/microsoft/example/RandomSentenceSpout.class
+com/microsoft/example/SplitSentence.class
+com/microsoft/example/WordCountTopology.class
+com/microsoft/example/WordCount.class
