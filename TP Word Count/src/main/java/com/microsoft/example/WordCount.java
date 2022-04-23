@@ -17,28 +17,31 @@ import org.apache.storm.Config;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-//There are a variety of bolt types. In this case, use BaseBasicBolt
+// Il existe une variété de types de boulons. Dans ce cas, utilisez BaseBasicBolt
 public class WordCount extends BaseBasicBolt {
-  //Create logger for this class
+  
+  //Créer un logger pour cette class
   private static final Logger logger = LogManager.getLogger(WordCount.class);
-  //For holding words and counts
+  
+  // Pour contenir des mots et des chiffres
   Map<String, Integer> counts = new HashMap<String, Integer>();
-  //How often to emit a count of words
+  
+  // À quelle fréquence émettre un décompte de mots
   private Integer emitFrequency;
 
-  // Default constructor
+  // constructor
   public WordCount() {
       emitFrequency=5; // Default to 60 seconds
   }
 
-  // Constructor that sets emit frequency
+  // // Constructeur qui définit la emit frequency
   public WordCount(Integer frequency) {
       emitFrequency=frequency;
   }
 
-  //Configure frequency of tick tuples for this bolt
-  //This delivers a 'tick' tuple on a specific interval,
-  //which is used to trigger certain actions
+  // Configurer la fréquence des tuples de tick pour ce boulon
+  // Ceci délivre un tuple 'tick' sur un intervalle spécifique,
+  // qui est utilisé pour déclencher certaines actions
   @Override
   public Map<String, Object> getComponentConfiguration() {
       Config conf = new Config();
@@ -46,10 +49,10 @@ public class WordCount extends BaseBasicBolt {
       return conf;
   }
 
-  //execute is called to process tuples
+  //execute est appelé pour traiter les tuples
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
-    //If it's a tick tuple, emit all words and counts
+    // Si c'est un tuple de tick, émet tous les mots et count
     if(tuple.getSourceComponent().equals(Constants.SYSTEM_COMPONENT_ID)
             && tuple.getSourceStreamId().equals(Constants.SYSTEM_TICK_STREAM_ID)) {
       for(String word : counts.keySet()) {
@@ -58,9 +61,10 @@ public class WordCount extends BaseBasicBolt {
         logger.info("Emitting a count of " + count + " for word " + word);
       }
     } else {
-      //Get the word contents from the tuple
+      
+      /// Récupère le contenu du mot à partir du tuple
       String word = tuple.getString(0);
-      //Have we counted any already?
+      //count
       Integer count = counts.get(word);
       if (count == null)
         count = 0;
@@ -70,7 +74,7 @@ public class WordCount extends BaseBasicBolt {
     }
   }
 
-  //Declare that this emits a tuple containing two fields; word and count
+  // Déclare que ceci émet un tuple contenant deux champs ; mot et count
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
     declarer.declare(new Fields("word", "count"));
