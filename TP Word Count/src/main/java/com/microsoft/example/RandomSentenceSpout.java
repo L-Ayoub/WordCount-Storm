@@ -33,8 +33,8 @@ public class RandomSentenceSpout extends BaseRichSpout {
   //Sleep for a bit
     Utils.sleep(100);
     //The sentences that are randomly emitted
-    String[] sentences = new String[]{ "the cow jumped over the moon", "an apple a day keeps the doctor away",
-        "four score and seven years ago", "snow white and the seven dwarfs", "i am at two with nature" };
+    String[] sentences = new String[]{ "salut ensa berrechid bonsoir", "bigdata data ensa et ou et",
+        "storm kafka hive", "apache storm etb apache hive et apache kafka et apache spark", "bigdata nosql ensa" };
     //Randomly pick a sentence
     String sentence = sentences[_rand.nextInt(sentences.length)];
     //Emit the sentence
