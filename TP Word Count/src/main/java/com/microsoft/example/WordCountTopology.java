@@ -10,49 +10,59 @@ import com.microsoft.example.RandomSentenceSpout;
 
 public class WordCountTopology {
 
-  //Entry point for the topology
+  //Point d'entrée de la topologie
   public static void main(String[] args) throws Exception {
-  //Used to build the topology
+    //Utilisé pour construire la topologie
     TopologyBuilder builder = new TopologyBuilder();
-    //Add the spout, with a name of 'spout'
+    
+    //Add the spout, with a name of 'spout' 18 
     //and parallelism hint of 5 executors
     builder.setSpout("spout", new RandomSentenceSpout(), 5);
-    //Add the SplitSentence bolt, with a name of 'split'
-    //and parallelism hint of 8 executors
-    //shufflegrouping subscribes to the spout, and equally distributes
-    //tuples (sentences) across instances of the SplitSentence bolt
+    
+    //Ajouter le boulon SplitSentence, avec le nom 'split'
+    //et indice de parallélisme de 8 exécuteurs
+    //shufflegrouping s'abonne au spout et distribue également
+    //tuples (phrases) à travers les instances du boulon SplitSentence
     builder.setBolt("split", new SplitSentence(), 8).shuffleGrouping("spout");
-    //Add the counter, with a name of 'count'
-    //and parallelism hint of 12 executors
-    //fieldsgrouping subscribes to the split bolt, and
-    //ensures that the same word is sent to the same instance (group by field 'word')
+    
+    //Ajouter le compteur, avec le nom 'count'
+    //et indice de parallélisme de 12 exécuteurs
+    //fieldsgrouping s'abonne au split bolt, et
+    //assure que le même mot est envoyé à la même instance
     builder.setBolt("count", new WordCount(), 12).fieldsGrouping("split", new Fields("word"));
 
-    //new configuration
+    //creer un configuration
     Config conf = new Config();
-    //Set to false to disable debug information when
-    // running in production on a cluster
+    
+    // metter false pour désactiver les informations de débogage lorsque
+    // s'exécute en production sur un cluster
     conf.setDebug(false);
 
-    //If there are arguments, we are running on a cluster
+    // S'il y a des arguments, nous courons sur un cluster
     if (args != null && args.length > 0) {
-      //parallelism hint to set the number of workers
+      
+      // indice de parallélisme pour définir le nombre de travailleurs
       conf.setNumWorkers(3);
-      //submit the topology
+      
+      // soumettre la topologie
       StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
     }
-    //Otherwise, we are running locally
+    
+// Sinon, nous exécutons localement
     else {
-      //Cap the maximum number of executors that can be spawned
-      //for a component to 3
+      // Limite le nombre maximum d'exécuteurs pouvant être générés
+      //pour un composant à 3
       conf.setMaxTaskParallelism(3);
-      //LocalCluster is used to run locally
+      
+      //LocalCluster est utilisé pour s'exécuter localement
       LocalCluster cluster = new LocalCluster();
-      //submit the topology
+      
+      
+      // soumettre la topologie
       cluster.submitTopology("word-count", conf, builder.createTopology());
       //sleep
       Thread.sleep(10000);
-      //shut down the cluster
+      //shut down the cluster //ferme le cluster
       cluster.shutdown();
     }
   }
